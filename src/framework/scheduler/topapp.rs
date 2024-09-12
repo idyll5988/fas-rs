@@ -16,12 +16,14 @@ use std::time::{Duration, Instant};
 
 use dumpsys_rs::Dumpsys;
 
+use std::collections::HashSet;
+
 const REFRESH_TIME: Duration = Duration::from_secs(1);
 
 #[derive(Default)]
 struct WindowsInfo {
     pub visible_freeform_window: bool,
-    pub pids: Vec<i32>,
+    pub pids: HashSet<i32>,
 }
 
 impl WindowsInfo {
@@ -35,7 +37,7 @@ impl WindowsInfo {
         }
     }
 
-    fn parse_top_app(dump: &str) -> Vec<i32> {
+    fn parse_top_app(dump: &str) -> HashSet<i32> {
         dump.lines()
             .filter(|l| l.contains("Session{"))
             .filter_map(|l| l.split_whitespace().nth(3))
@@ -60,7 +62,7 @@ impl TimedWatcher {
         }
     }
 
-    pub fn topapp_pids(&mut self) -> &Vec<i32> {
+    pub fn topapp_pids(&mut self) -> &HashSet<i32> {
         &self.cache().pids
     }
 
